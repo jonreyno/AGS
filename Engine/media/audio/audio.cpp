@@ -771,7 +771,7 @@ void clear_music_cache() {
 
     if (cachedQueuedMusic != NULL) {
         cachedQueuedMusic->destroy();
-        delete cachedQueuedMusic;
+        //delete cachedQueuedMusic;
         cachedQueuedMusic = NULL;
     }
 

@@ -1074,7 +1074,6 @@
 		60DC155516675BBE002D0474 /* staticarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = staticarray.h; sourceTree = "<group>"; };
 		60DC155716675BBF002D0474 /* staticobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = staticobject.h; sourceTree = "<group>"; };
 		60F49A49155131E500A07887 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		7A46B2C1215CA44900F79AD5 /* libagsteam.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libagsteam.a; path = ../../nativelibs/fat/lib/libagsteam.a; sourceTree = "<group>"; };
 		7A46B37D216025FB00F79AD5 /* StatsStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatsStub.cpp; sourceTree = "<group>"; };
 		7A46B37E216025FB00F79AD5 /* StatsStub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatsStub.h; sourceTree = "<group>"; };
 		7A46B37F216025FB00F79AD5 /* AchievementsStub.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AchievementsStub.cpp; sourceTree = "<group>"; };
@@ -1097,6 +1096,7 @@
 		7A46B395216025FB00F79AD5 /* IClientLeaderboards.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IClientLeaderboards.cpp; sourceTree = "<group>"; };
 		7A46B396216025FB00F79AD5 /* AGSFloatFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AGSFloatFix.h; sourceTree = "<group>"; };
 		7A46B3A921604BDB00F79AD5 /* AGSSpriteFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AGSSpriteFont.h; sourceTree = "<group>"; };
+		7A6A6833216B2D8900D7E29B /* HeroinesQuest_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeroinesQuest_Prefix.pch; sourceTree = "<group>"; };
 		7A6DEB90216071C500069D97 /* main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		7A70FC0921613B8000DB41BB /* Heroine's Quest.001 */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Heroine's Quest.001"; path = "game/Heroine's Quest.001"; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* HeroinesQuest-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "HeroinesQuest-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
@@ -1188,6 +1188,7 @@
 			isa = PBXGroup;
 			children = (
 				32CA4F630368D1EE00C91783 /* HeroinesQuest_Prefix.pch */,
+				7A6A6833216B2D8900D7E29B /* HeroinesQuest_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.mm */,
 			);
 			name = "Other Sources";
@@ -1215,7 +1216,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7A46B2C1215CA44900F79AD5 /* libagsteam.a */,
 				114D6E611ADEC259003145B4 /* liballeg.a */,
 				6041A85D1552E60600596310 /* libaldmb.a */,
 				6041A8971552E8C400596310 /* libbz2.dylib */,
