@@ -1,0 +1,10 @@
+build
+*.depend
+*.layout
+*.ncb
+*.sdf
+*.suo
+*.vc*proj.user
+*.vc*proj.*.user
+*.opensdf
+VS2017/.vs
