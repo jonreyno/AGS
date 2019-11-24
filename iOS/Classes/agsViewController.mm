@@ -15,14 +15,12 @@ extern void check_skip_cutscene_drag(int startx, int starty, int endx, int endy)
 @interface agsViewController ()
 @property (nonatomic, retain) EAGLContext *context;
 @property (readwrite, retain) UIView *inputAccessoryView;
-@property (readwrite, assign) BOOL isInPortraitOrientation;
-@property (readwrite, assign) BOOL isKeyboardActive;
 @property (readwrite, assign) BOOL isIPad;
 @end
 
 @implementation agsViewController
 
-@synthesize context, inputAccessoryView, isInPortraitOrientation, isKeyboardActive, isIPad;
+@synthesize context, inputAccessoryView, isIPad;
 
 char* ios_document_directory;
 
@@ -100,6 +98,29 @@ extern "C"
 	return YES;
 }
 
+- (void)registerForKeyboardNotifications
+{
+   [[NSNotificationCenter defaultCenter] addObserver:self
+           selector:@selector(keyboardWillBeShown:)
+           name:UIKeyboardWillShowNotification object:nil];
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+            selector:@selector(keyboardWillBeHidden:)
+            name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void) keyboardWillBeShown:(NSNotification*)aNotification
+{
+    if (self.isInPortraitOrientation)
+        [self moveViewAnimated:YES duration:0.25];
+}
+
+- (void) keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    if (self.isInPortraitOrientation)
+        [self moveViewAnimated:NO duration:0.25];
+}
+
 //JG - Allows script to fake a keypress.
 extern "C" void fakekey(int keypress)
 {
@@ -116,7 +137,7 @@ int lastChar;
 extern "C" int ios_get_last_keypress()
 {
 	int result = lastChar;
-	lastChar = 0;
+    lastChar = 0;
 	return result;
 }
 
@@ -143,11 +164,6 @@ extern "C" int ios_is_keyboard_visible()
 	if (![self isFirstResponder])
 	{
 		[self becomeFirstResponder];
-
-		if (self.isInPortraitOrientation)
-			[self moveViewAnimated:YES duration:0.25];
-
-		self.isKeyboardActive = TRUE;
 	}
 }
 
@@ -156,14 +172,13 @@ extern "C" int ios_is_keyboard_visible()
 	if ([self isFirstResponder])
 	{
 		[self resignFirstResponder];
-			
-		if (self.isInPortraitOrientation)
-			[self moveViewAnimated:NO duration:0.25];
-		
-		self.isKeyboardActive = FALSE;
 	}
 }
 
+- (BOOL)isKeyboardActive
+{
+    return [self isFirstResponder];
+}
 
 - (BOOL)hasText
 {
@@ -173,15 +188,15 @@ extern "C" int ios_is_keyboard_visible()
 - (void)insertText:(NSString *)theText
 {
 	const char* text = [theText cStringUsingEncoding:NSASCIIStringEncoding];
-	if (text)
-		lastChar = text[0];
+    if (text) {
+        lastChar = text[0];
+    }
 }
 
 - (void)deleteBackward
 {
 	lastChar = 8; // Backspace
 }
-
 
 - (void)createKeyboardButtonBar:(int)openedKeylist
 {
@@ -250,8 +265,8 @@ extern "C" int ios_is_keyboard_visible()
 		UIBarButtonItem* openf9 = [[UIBarButtonItem alloc] initWithTitle:@"F9..." style:UIBarButtonItemStyleBordered target:self action:@selector(buttonClicked:)];
 		[array addObject:openf9];
 	}
-
-	[toolbar setItems:array animated:YES];
+    
+    [toolbar setItems:array animated:YES];
 
 	if (!alreadyExists)
 	{
@@ -261,7 +276,6 @@ extern "C" int ios_is_keyboard_visible()
     
     [array release]; //JG fix memory leak
 }
-
 
 - (IBAction)buttonClicked:(UIBarButtonItem *)sender
 {
@@ -345,21 +359,6 @@ extern "C" int ios_is_keyboard_visible()
     [self showKeyboard];
 }
 
-- (IBAction)handleLongPress:(UIGestureRecognizer *)sender
-{
-	if (sender.state != UIGestureRecognizerStateBegan)
-	  return;
-
-	if (self.isKeyboardActive)
-	{
-		[self hideKeyboard];
-	}
-	else
-	{
-		[self showKeyboard];
-	}
-}
-
 - (IBAction)handleShortLongPress:(UIGestureRecognizer *)sender
 {
     CGPoint point = [sender locationInView:self.view];
@@ -399,7 +398,13 @@ extern "C" int ios_is_keyboard_visible()
         return;
     }
     else if (sender.state == UIGestureRecognizerStateEnded)
+    {
+        // Touches aren't accurate at the bottom edge so if touches end around there we put you on the edge
+        if(self.view.bounds.size.height - point.y < 8)
+            mouse_position_y = self.view.bounds.size.height;
         check_skip_cutscene_drag(mouse_start_position_x, mouse_start_position_y, mouse_position_x, mouse_position_y);
+    }
+        
 }
 /*
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
@@ -533,7 +538,10 @@ extern "C" void ios_create_screen()
     self.isIPad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
-
+- (BOOL)isInPortraitOrientation
+{
+    return UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
+}
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
@@ -550,9 +558,13 @@ extern "C" void ios_create_screen()
 //- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-	self.isInPortraitOrientation = UIInterfaceOrientationIsLandscape(fromInterfaceOrientation);
-	if (self.isKeyboardActive && self.isInPortraitOrientation)
-		[self moveViewAnimated:YES duration:0.1];
+    if (self.isKeyboardActive)
+    {
+        if (self.isInPortraitOrientation)
+            [self moveViewAnimated:YES duration:0.1];
+        else
+            [self moveViewAnimated:NO duration:0];
+    }
 }
 
 
@@ -574,9 +586,7 @@ extern "C" void ios_create_screen()
     [(EAGLView *)self.view setContext:context];
     [(EAGLView *)self.view setFramebuffer];
     
-    self.isKeyboardActive = FALSE;
-    self.isInPortraitOrientation = FALSE;
-    
+    [self registerForKeyboardNotifications];
     [self createKeyboardButtonBar:1];
     
     [NSThread detachNewThreadSelector:@selector(startThread) toTarget:self withObject:nil];
@@ -598,19 +608,21 @@ extern "C" void ios_create_screen()
     strcpy(path, temp_document_dir);
 #if !defined (IOS_VERSION)
     strcat(path, "/ags/game/"); //JG
+#else
+    strcat(path, "/");
 #endif
     char filename[300];
     
-#if defined (IOS_VERSION)
+/*#if defined (IOS_VERSION)
     //JG
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"ac2game"
                                                          ofType:@"dat"];
     const char * resourceChars = [filePath UTF8String];
     strcpy(filename, resourceChars);
-#else
+#endif*/
     strcpy(filename, path);
-    strcat(filename, "ac2game.dat");
-#endif
+    //strcat(filename, "ac2game.dat");
+
     startEngine(filename, path, 0);
     
     //[pool release];
@@ -681,6 +693,11 @@ void ios_show_message_box(char* buffer)
 - (BOOL) prefersStatusBarHidden
 {
     return YES;
+}
+
+- (UIRectEdge)preferredScreenEdgesDeferringSystemGestures
+{
+    return UIRectEdgeAll;
 }
 
 @end

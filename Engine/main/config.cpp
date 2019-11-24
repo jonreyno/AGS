@@ -338,7 +338,7 @@ void read_config(const ConfigTree &cfg)
 #if defined (WINDOWS_VERSION)
         usetup.Screen.DriverID = INIreadstring(cfg, "graphics", "driver");
 #else
-        usetup.Screen.DriverID = "DX5";
+        usetup.Screen.DriverID = "OGL";
 #endif
         usetup.Screen.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
         const char *screen_sz_def_options[kNumScreenDef] = { "explicit", "scaling", "max" };
@@ -458,7 +458,7 @@ void read_config(const ConfigTree &cfg)
 void post_config()
 {
     if (usetup.Screen.DriverID.IsEmpty())
-        usetup.Screen.DriverID = "DX5";
+        usetup.Screen.DriverID = "OGL";
 
     // FIXME: this correction is needed at the moment because graphics driver
     // implementation requires some filter to be created anyway
@@ -481,7 +481,7 @@ void load_default_config_file(ConfigTree &cfg, const char *alt_cfg_file)
     // Don't read in the standard config file if disabled.
     if (psp_ignore_acsetup_cfg_file)
     {
-        usetup.Screen.DriverID = "DX5";
+        usetup.Screen.DriverID = "OGL";
         usetup.enable_antialiasing = psp_gfx_smooth_sprites != 0;
         usetup.translation = psp_translation;
         return;
